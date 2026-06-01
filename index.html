@@ -521,10 +521,12 @@
       .prod-grid { gap: 1px; }
       .prod-info { padding: 12px 2px 20px; }
       .prod-name { font-size: 14px; }
-      /* Size selector: 'Tamanho' label on its own line, pills wrap below (no overflow) */
-      .prod-sizes { flex-wrap: wrap; gap: 5px; padding: 10px; }
-      .sz-label { order: -1; flex-basis: 100%; margin-left: 0; margin-bottom: 2px; }
-      .sz { min-width: 28px; padding: 5px 6px; }
+      /* Size selector: 'Tamanho' label on its own line; pills share one row (segmented, no wrap) */
+      .prod-sizes { flex-wrap: wrap; gap: 4px; padding: 9px 10px; }
+      .sz-label { order: -1; flex-basis: 100%; margin: 0 0 4px; }
+      .sz { flex: 1 1 0; min-width: 0; padding: 6px 2px; text-align: center; }
+      /* lift the carousel arrows/dots above the taller size drawer (no overlap) */
+      .prod-arrows, .prod-img-dots { bottom: 74px; }
       .foot-main { grid-template-columns: 1fr; }
       .testimonials { padding: 56px 20px; }
       .ed-panel { height: 260px; }
@@ -705,7 +707,7 @@
           </div>
           <div class="prod-sizes">
             <button class="sz">PP</button><button class="sz">P</button>
-            <button class="sz">M</button><button class="sz">G</button><button class="sz">GG</button>
+            <button class="sz">M</button><button class="sz">G</button>
             <span class="sz-label">Tamanho</span>
           </div>
         </div>
