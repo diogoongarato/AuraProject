@@ -88,6 +88,9 @@
     header.nav-open:not(.scrolled) .hdr-nav .sale-link { color: var(--sale); }
     header.nav-open:not(.scrolled) .hdr-nav .sale-link::after { background: var(--sale); }
     header.nav-open:not(.scrolled) .cart-badge { background: var(--black); color: var(--white); }
+    /* Mobile menu open → header in filled (white) state, like the design */
+    header.menu-open { background: rgba(255,255,255,0.97); backdrop-filter: blur(10px); --hdr-fg: var(--black); }
+    header.menu-open .cart-badge { background: var(--black); color: var(--white); }
 
     .hdr {
       display: grid;
@@ -366,6 +369,9 @@
       border: 1px solid var(--border); background: none;
       cursor: pointer; transition: all .15s;
       min-width: 30px; text-align: center;
+      color: var(--black);
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none; user-select: none;
     }
     .sz:hover, .sz.sel { background: var(--black); color: var(--white); border-color: var(--black); }
     .sz-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-mid); margin-left: auto; }
@@ -477,6 +483,11 @@
       /* Products: 2 columns */
       .vitrine { padding: 56px 20px; }
       .prod-grid { grid-template-columns: repeat(2, 1fr); }
+      /* Touch (no hover): keep the card's "hover" state always visible */
+      .prod-arrows { opacity: 1; pointer-events: auto; }
+      .prod-img-dots { opacity: 1; }
+      .prod-wish { opacity: 1; }
+      .prod-sizes { transform: none; }
 
       /* Editorial: stacked */
       .ed-banner { grid-template-columns: 1fr; height: auto; }
@@ -510,6 +521,10 @@
       .prod-grid { gap: 1px; }
       .prod-info { padding: 12px 2px 20px; }
       .prod-name { font-size: 14px; }
+      /* Size selector: 'Tamanho' label on its own line, pills wrap below (no overflow) */
+      .prod-sizes { flex-wrap: wrap; gap: 5px; padding: 10px; }
+      .sz-label { order: -1; flex-basis: 100%; margin-left: 0; margin-bottom: 2px; }
+      .sz { min-width: 28px; padding: 5px 6px; }
       .foot-main { grid-template-columns: 1fr; }
       .testimonials { padding: 56px 20px; }
       .ed-panel { height: 260px; }
@@ -592,12 +607,12 @@
         <a href="#" aria-label="Favoritos">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </a>
-        <a href="#" aria-label="Minha conta">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </a>
         <a href="#" aria-label="Carrinho" style="position:relative;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="cart-badge">0</span>
+        </a>
+        <a href="#" aria-label="Minha conta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </a>
         <button class="hamburger" id="hamburger" aria-label="Menu">
           <span></span><span></span><span></span>
@@ -605,20 +620,21 @@
       </div>
 
     </div>
-
-    <!-- Mobile drawer -->
-    <nav class="mobile-menu" id="mobileMenu" data-lenis-prevent>
-      <a href="#">Novidades</a>
-      <a href="#">Roupas</a>
-      <div class="mobile-sub">
-        <a href="#">Calça</a><a href="#">Vestido</a><a href="#">Blusa</a>
-        <a href="#">Camisa</a><a href="#">Camiseta</a><a href="#">Saia</a>
-      </div>
-      <a href="#">Calçados</a>
-      <a href="#">Acessórios</a>
-      <a href="#" class="sale-link">Sale</a>
-    </nav>
   </header>
+
+  <!-- Mobile drawer — kept OUTSIDE <header> so its position:fixed stays relative to the
+       viewport (a backdrop-filter on the header would otherwise become its containing block) -->
+  <nav class="mobile-menu" id="mobileMenu" data-lenis-prevent>
+    <a href="#">Novidades</a>
+    <a href="#">Roupas</a>
+    <div class="mobile-sub">
+      <a href="#">Calça</a><a href="#">Vestido</a><a href="#">Blusa</a>
+      <a href="#">Camisa</a><a href="#">Camiseta</a><a href="#">Saia</a>
+    </div>
+    <a href="#">Calçados</a>
+    <a href="#">Acessórios</a>
+    <a href="#" class="sale-link">Sale</a>
+  </nav>
 
   <!-- ═══════════ HERO ═══════════ -->
   <section class="hero" id="hero">
@@ -769,7 +785,7 @@
       </div>
 
       <!-- Product 4: Colete Verniz Marrom -->
-      <div class="prod-card rv d4" data-imgs='["imgs/14.webp","imgs/15.webp","imgs/16.webp","imgs/17.webp"]'>
+      <div class="prod-card rv d4" data-imgs='["imgs/14.webp","imgs/15.webp"]'>
         <div class="prod-img-wrap">
           <img src="imgs/14.webp" alt="Colete Verniz" loading="eager" />
           <span class="prod-badge new-b">Novo</span>
@@ -780,8 +796,6 @@
           </div>
           <div class="prod-img-dots">
             <button class="img-dot active"></button>
-            <button class="img-dot"></button>
-            <button class="img-dot"></button>
             <button class="img-dot"></button>
           </div>
           <div class="prod-sizes">
@@ -886,7 +900,7 @@
         </div>
       </div>
 
-      <div class="prod-card rv d2" data-imgs='["imgs/20.webp","imgs/21.webp","imgs/22.webp"]'>
+      <div class="prod-card rv d2" data-imgs='["imgs/20.webp","imgs/22.webp"]'>
         <div class="prod-img-wrap">
           <img src="imgs/20.webp" alt="Vestido Mini Off-White" loading="lazy" />
           <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
@@ -896,7 +910,6 @@
           </div>
           <div class="prod-img-dots">
             <button class="img-dot active"></button>
-            <button class="img-dot"></button>
             <button class="img-dot"></button>
           </div>
           <div class="prod-sizes">
@@ -948,9 +961,9 @@
         </div>
       </div>
 
-      <div class="prod-card rv d4" data-imgs='["imgs/14.webp","imgs/15.webp","imgs/16.webp"]'>
+      <div class="prod-card rv d4" data-imgs='["imgs/16.webp","imgs/17.webp"]'>
         <div class="prod-img-wrap">
-          <img src="imgs/14.webp" alt="Colete Verniz" loading="lazy" />
+          <img src="imgs/16.webp" alt="Shorts Alfaiataria" loading="lazy" />
           <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           <div class="prod-arrows">
             <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -958,7 +971,6 @@
           </div>
           <div class="prod-img-dots">
             <button class="img-dot active"></button>
-            <button class="img-dot"></button>
             <button class="img-dot"></button>
           </div>
           <div class="prod-sizes">
@@ -968,12 +980,11 @@
           </div>
         </div>
         <div class="prod-info">
-          <h3 class="prod-name">Colete Verniz</h3>
+          <h3 class="prod-name">Shorts Alfaiataria</h3>
           <div class="prod-colors">
-            <div class="cdot" style="background:#8B4513"></div>
-            <div class="cdot" style="background:#1A1916"></div>
+            <div class="cdot" style="background:#1A1916" title="Preto"></div>
           </div>
-          <div class="prod-price"><span class="p-cur">R$ 599,90</span></div>
+          <div class="prod-price"><span class="p-cur">R$ 349,90</span></div>
         </div>
       </div>
 
@@ -1095,8 +1106,9 @@
   <script>
     // ── SMOOTH SCROLL with inertia (Lenis) ──
     // Disabled when the user prefers reduced motion, or if the lib failed to load.
+    let lenis = null;
     if (window.Lenis && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const lenis = new Lenis({
+      lenis = new Lenis({
         duration: 1.2,                                            // higher = longer glide / more "delay"
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out: quick start, eases to a gentle stop
         smoothWheel: true,
@@ -1211,9 +1223,18 @@
     const hamburger  = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
     hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      mobileMenu.classList.toggle('open');
-      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+      const opening = !mobileMenu.classList.contains('open');
+      hamburger.classList.toggle('open', opening);
+      mobileMenu.classList.toggle('open', opening);
+      siteHeader.classList.toggle('menu-open', opening);
+      document.body.style.overflow = opening ? 'hidden' : '';
+      if (opening) {
+        // align the drawer to the header's real bottom (accounts for the announce bar) and freeze the page scroll
+        mobileMenu.style.top = siteHeader.getBoundingClientRect().bottom + 'px';
+        if (lenis) lenis.stop();
+      } else if (lenis) {
+        lenis.start();
+      }
     });
 
     // ── NEWSLETTER ──
