@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA — Moda Contemporânea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream:      #F8F5F0;
+      --white:      #FFFFFF;
+      --black:      #1A1916;
+      --gray-dark:  #4A4845;
+      --gray-mid:   #8A8784;
+      --gray-light: #D4D1CC;
+      --border:     #E8E4DF;
+      --accent:     #B09070;
+      --sale:       #C44B3B;
+      --font-d:     'Cormorant Garamond', serif;
+      --font-b:     'DM Sans', sans-serif;
+
+      /* Type scale — mirrors the Figma text styles (Aura design system) */
+      --text-h1:      72px;  /* Display/H1  — Cormorant Light */
+      --text-h2:      44px;  /* Heading/H2  — Cormorant Light */
+      --text-h3:      28px;  /* Heading/H3  — Cormorant */
+      --text-h4:      18px;  /* Heading/H4  — Cormorant */
+      --text-h5:      15px;  /* Heading/H5  — Cormorant */
+      --text-body-lg: 15px;  /* Body/Large  — DM Sans */
+      --text-body:    14px;  /* Body/Regular— DM Sans */
+      --text-body-sm: 12px;  /* Body/Small  — DM Sans */
+      --text-nav:     13px;  /* UI/Nav      — DM Sans */
+      --text-caption: 12px;  /* UI/Caption  — DM Sans */
+      --text-label:   11px;  /* UI/Label    — DM Sans Medium */
+    }
+
+    html { scroll-behavior: smooth; }
+    /* Lenis smooth-scroll (inertia) — these neutralize native smoothing while Lenis is active */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-smooth iframe { pointer-events: none; }
+    body { font-family: var(--font-b); background: var(--white); color: var(--black); overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { font-family: var(--font-b); }
+
+    /* ─── ANNOUNCE ─── */
+    .announce {
+      background: var(--black); color: var(--white);
+      text-align: center; padding: 10px 16px;
+      font-size: var(--text-label); letter-spacing: 1.4px; text-transform: uppercase;
+      display: flex; justify-content: center; align-items: center; gap: 0;
+    }
+    .announce span { opacity: .4; margin: 0 12px; }
+    .ann-extra { display: inline; }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      /* transparent by default — overlays the hero */
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background .4s ease, border-color .4s ease;
+      /* custom property drives all text/icon colors */
+      --hdr-fg: var(--white);
+    }
+    header.scrolled {
+      background: rgba(255,255,255,0.97);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      --hdr-fg: var(--black);
+    }
+    /* Dark (black) header over light-background hero slides (e.g. green-sweater slide) */
+    header.over-light:not(.scrolled) { --hdr-fg: var(--black); }
+    header.over-light:not(.scrolled) .hdr-nav .sale-link { color: var(--sale); }
+    header.over-light:not(.scrolled) .hdr-nav .sale-link::after { background: var(--sale); }
+    header.over-light:not(.scrolled) .cart-badge { background: var(--black); color: var(--white); }
+    /* Roupas mega-menu open → fill the header into a seamless white panel */
+    header.nav-open { border-bottom-color: transparent; }
+    header.nav-open:not(.scrolled) { background: rgba(255,255,255,0.97); backdrop-filter: blur(10px); --hdr-fg: var(--black); }
+    header.nav-open:not(.scrolled) .hdr-nav .sale-link { color: var(--sale); }
+    header.nav-open:not(.scrolled) .hdr-nav .sale-link::after { background: var(--sale); }
+    header.nav-open:not(.scrolled) .cart-badge { background: var(--black); color: var(--white); }
+
+    .hdr {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 40px;
+      height: 68px;
+    }
+
+    /* Logo */
+    .logo-link { display: flex; align-items: center; justify-content: center; }
+    .logo-svg { width: 110px; height: auto; fill: currentColor; color: var(--hdr-fg); display: block; transition: color .4s ease; }
+
+    /* Left nav */
+    .hdr-nav { display: flex; gap: 24px; align-items: center; }
+    .hdr-nav a {
+      font-size: var(--text-label); letter-spacing: 1.5px;
+      text-transform: uppercase; font-weight: 400;
+      color: var(--hdr-fg); white-space: nowrap;
+      position: relative; display: flex; align-items: center; gap: 4px;
+      transition: color .4s ease;
+    }
+    .hdr-nav a::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0; right: 0;
+      height: 1px; background: var(--hdr-fg);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease, background .4s ease;
+    }
+    .hdr-nav a:hover::after { transform: scaleX(1); }
+    /* Sale link adapts to header state */
+    .hdr-nav .sale-link { color: var(--sale); }
+    header:not(.scrolled) .hdr-nav .sale-link { color: #ff9a8a; }
+    .hdr-nav .sale-link::after { background: var(--sale); }
+    header:not(.scrolled) .hdr-nav .sale-link::after { background: #ff9a8a; }
+
+    /* Dropdown — full-width mega menu (opens on Roupas hover) */
+    .has-drop { display: flex; align-items: center; cursor: pointer; }
+    .drop-trigger { /* inherits .hdr-nav a styling */ }
+    .drop-arrow {
+      display: inline-block; width: 8px; height: 5px;
+      transition: transform .3s ease; flex-shrink: 0; margin-top: 1px;
+    }
+    header.nav-open .drop-arrow { transform: rotate(180deg); }
+    header.nav-open .drop-trigger::after { transform: scaleX(1); }
+
+    /* Mega panel spans the full header width (header is the positioned ancestor) */
+    .dropdown {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 40px 40px 48px;
+      opacity: 0; pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity .3s ease, transform .3s ease;
+      z-index: 250;
+    }
+    header.nav-open .dropdown { opacity: 1; pointer-events: auto; transform: none; }
+    .mega-inner { display: flex; gap: 72px; }
+    .mega-col { display: flex; flex-direction: column; gap: 13px; }
+    .mega-head {
+      font-size: var(--text-label); letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gray-mid); font-weight: 500; margin-bottom: 8px;
+    }
+    .dropdown a {
+      font-family: var(--font-d); font-size: var(--text-h4); font-weight: 300;
+      color: var(--gray-dark); letter-spacing: .3px; white-space: nowrap;
+      text-transform: none; display: block; transition: color .2s ease;
+    }
+    .dropdown a:hover { color: var(--black); }
+    .dropdown a::after { display: none !important; }
+
+    /* Right icons */
+    .hdr-actions { display: flex; gap: 18px; align-items: center; justify-content: flex-end; }
+    .hdr-actions a, .hdr-actions button {
+      background: none; border: none; cursor: pointer;
+      color: var(--hdr-fg); display: flex; align-items: center; gap: 5px;
+      font-size: var(--text-label); letter-spacing: 1.5px; text-transform: uppercase;
+      transition: opacity .2s, color .4s ease; padding: 0;
+    }
+    .hdr-actions a:hover, .hdr-actions button:hover { opacity: .5; }
+    .cart-badge {
+      background: var(--hdr-fg); color: var(--black);
+      width: 16px; height: 16px; border-radius: 50%;
+      font-size: 9px; display: flex; align-items: center; justify-content: center;
+      transition: background .4s ease, color .4s ease;
+    }
+    header.scrolled .cart-badge { background: var(--black); color: var(--white); }
+    .search-label { font-size: var(--text-label); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* Hamburger — tablet + mobile only */
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px; z-index: 201;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 1px;
+      background: var(--hdr-fg);
+      transition: all .3s ease, background .4s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    /* Desktop guard: hamburger is tablet/mobile only — never visible on desktop (>1024px) */
+    @media (min-width: 1025px) { .hamburger { display: none !important; } }
+
+    /* Mobile drawer */
+    .mobile-menu {
+      position: fixed; inset: 0; top: 68px;
+      background: var(--white); z-index: 199;
+      padding: 32px 24px; display: flex; flex-direction: column; gap: 20px;
+      transform: translateX(-100%); transition: transform .35s ease;
+      overflow-y: auto;
+    }
+    .mobile-menu.open { transform: none; }
+    .mobile-menu a {
+      font-family: var(--font-d); font-size: var(--text-h3); font-weight: 300;
+      border-bottom: 1px solid var(--border); padding-bottom: 16px;
+      color: var(--black);
+    }
+    .mobile-menu a.sale-link { color: var(--sale); }
+    .mobile-sub {
+      display: flex; flex-direction: column; gap: 10px;
+      padding-left: 20px; margin-top: -8px;
+    }
+    .mobile-sub a { font-size: var(--text-h4); border: none; padding-bottom: 0; color: var(--gray-dark); }
+
+    /* ─── HERO ─── */
+    /* negative margin pulls the hero up behind the transparent header, eliminating the white gap */
+    .hero { position: relative; height: 100vh; margin-top: -68px; overflow: hidden; background: var(--black); }
+    .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .9s ease; pointer-events: none; }
+    .hero-slide.active { opacity: 1; pointer-events: auto; }
+    .hero-slide img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center center;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,.45) 0%, rgba(0,0,0,.15) 55%, transparent 100%);
+    }
+    .hero-overlay.light {
+      background: linear-gradient(to right, rgba(255,255,255,.35) 0%, rgba(255,255,255,.1) 60%, transparent 100%);
+    }
+    .hero-content {
+      position: absolute; bottom: 100px; left: 80px;
+      color: var(--white); max-width: 480px;
+    }
+    .hero-content.dark { color: var(--black); }
+    .hero-eyebrow { font-size: var(--text-label); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; opacity: .75; }
+    .hero-title {
+      font-family: var(--font-d); font-size: clamp(44px, 5.5vw, var(--text-h1));
+      font-weight: 300; line-height: 1.05; margin-bottom: 36px;
+    }
+
+    /* ─── BUTTON — fill from left on hover ─── */
+    .btn {
+      display: inline-block; border: 1px solid currentColor;
+      padding: 13px 36px; font-size: var(--text-label); letter-spacing: 2.5px;
+      text-transform: uppercase; color: inherit;
+      position: relative; overflow: hidden; isolation: isolate;
+      transition: color .35s ease;
+      cursor: pointer;
+    }
+    .btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      /* fill is always the stroke color — white for white-border buttons */
+      background: var(--white);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .4s cubic-bezier(.65, 0, .35, 1);
+      z-index: -1;
+    }
+    /* on-light buttons have black stroke → fill is black */
+    .btn.on-light::before { background: var(--black); }
+    .btn:hover::before { transform: scaleX(1); }
+    /* after white fill: text goes black for contrast */
+    .btn:hover { color: var(--black); }
+    /* after black fill: text goes white for contrast */
+    .btn.on-light:hover { color: var(--white) !important; }
+
+    .hero-dots { position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+    .hdot { width: 28px; height: 2px; background: rgba(255,255,255,.35); border: none; cursor: pointer; transition: background .3s; }
+    .hdot.active { background: rgba(255,255,255,.9); }
+    .hero-arr {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--white);
+      cursor: pointer; padding: 16px; opacity: .7; transition: opacity .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-arr:hover { opacity: 1; }
+    .hero-arr.l { left: 24px; }
+    .hero-arr.r { right: 24px; }
+
+    /* ─── SECTION HEADER ─── */
+    .sec-hdr { text-align: center; margin-bottom: 48px; }
+    .eyebrow { font-size: var(--text-label); letter-spacing: 3px; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 12px; }
+    .sec-title { font-family: var(--font-d); font-size: clamp(30px, 4vw, var(--text-h2)); font-weight: 300; }
+
+    /* ─── VITRINE / PRODUCTS ─── */
+    .vitrine { padding: 80px 40px; }
+    .prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+
+    .prod-card { position: relative; cursor: pointer; }
+    .prod-img-wrap {
+      position: relative; overflow: hidden;
+      aspect-ratio: 2/3; background: var(--cream);
+    }
+    .prod-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
+      transition: transform .55s ease;
+      position: absolute; top: 0; left: 0;
+    }
+    .prod-card:hover .prod-img-wrap img { transform: scale(1.04); }
+
+    /* Product image carousel arrows */
+    .prod-arrows {
+      position: absolute; bottom: 56px; left: 0; right: 0;
+      display: flex; justify-content: space-between; padding: 0 10px;
+      opacity: 0; transition: opacity .2s; z-index: 10; pointer-events: none;
+    }
+    .prod-card:hover .prod-arrows { opacity: 1; pointer-events: auto; }
+    .prod-arr-btn {
+      background: rgba(255,255,255,.88); border: none;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; color: var(--black);
+      transition: background .15s; backdrop-filter: blur(4px);
+    }
+    .prod-arr-btn:hover { background: var(--white); }
+
+    /* Image dots */
+    .prod-img-dots {
+      position: absolute; bottom: 56px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 4px; z-index: 9;
+      opacity: 0; transition: opacity .2s;
+    }
+    .prod-card:hover .prod-img-dots { opacity: 1; }
+    .img-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: rgba(255,255,255,.5); border: none; cursor: pointer;
+      transition: background .15s;
+    }
+    .img-dot.active { background: var(--white); }
+
+    .prod-wish {
+      position: absolute; top: 14px; right: 14px;
+      background: none; border: none; color: var(--white);
+      cursor: pointer; opacity: 0; transition: opacity .2s; padding: 4px;
+    }
+    .prod-card:hover .prod-wish { opacity: 1; }
+    .prod-wish svg { display: block; }
+    .prod-wish.liked path { fill: currentColor; }
+
+    /* Badge — Novo / Sale only, no product name in top area */
+    .prod-badge {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--black); color: var(--white);
+      font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 8px;
+      z-index: 5;
+    }
+    .prod-badge.new-b { background: var(--accent); }
+    .prod-badge.sale-b { background: var(--sale); }
+
+    /* Size drawer */
+    .prod-sizes {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--white); padding: 10px 14px;
+      display: flex; gap: 5px; align-items: center;
+      transform: translateY(100%); transition: transform .3s ease;
+      border-top: 1px solid var(--border); z-index: 10;
+    }
+    .prod-card:hover .prod-sizes { transform: none; }
+    .sz {
+      font-size: var(--text-label); padding: 5px 7px;
+      border: 1px solid var(--border); background: none;
+      cursor: pointer; transition: all .15s;
+      min-width: 30px; text-align: center;
+    }
+    .sz:hover, .sz.sel { background: var(--black); color: var(--white); border-color: var(--black); }
+    .sz-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-mid); margin-left: auto; }
+
+    .prod-info { padding: 16px 4px 32px; }
+    .prod-name { font-family: var(--font-d); font-size: 16px; font-weight: 400; margin-bottom: 8px; }
+    .prod-colors { display: flex; gap: 6px; margin-bottom: 10px; }
+    .cdot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; transition: transform .15s; }
+    .cdot:hover { transform: scale(1.35); }
+    .prod-price { display: flex; gap: 8px; align-items: baseline; }
+    .p-cur { font-size: var(--text-body); }
+    .p-old { font-size: var(--text-body-sm); color: var(--gray-mid); text-decoration: line-through; }
+    .p-off { font-size: var(--text-label); color: var(--sale); }
+
+    .cta-row { text-align: center; margin-top: 48px; }
+
+    /* ─── EDITORIAL BANNER ─── */
+    .ed-banner { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; height: 600px; }
+    .ed-panel { position: relative; overflow: hidden; }
+    .ed-panel img { width: 100%; height: 100%; object-fit: cover; object-position: center center; transition: transform .65s ease; }
+    .ed-panel:hover img { transform: scale(1.04); }
+    .ed-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 48px;
+      background: linear-gradient(transparent 20%, rgba(0,0,0,.52));
+      color: var(--white);
+    }
+    .ed-overlay h2 { font-family: var(--font-d); font-size: clamp(var(--text-h3), 3vw, 40px); font-weight: 300; margin-bottom: 20px; line-height: 1.15; }
+
+    /* ─── VALUES ─── */
+    .values { padding: 80px 40px; background: var(--black); color: var(--white); text-align: center; }
+    .values .eyebrow { color: rgba(255,255,255,.3); }
+    .values .sec-title { color: var(--white); }
+    .val-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; max-width: 900px; margin: 56px auto 0; }
+    .val-icon { margin-bottom: 18px; color: var(--white); line-height: 0; }
+    .val-icon svg { width: 30px; height: 30px; display: inline-block; }
+    .val-item h3 { font-family: var(--font-d); font-size: 20px; font-weight: 300; margin-bottom: 14px; }
+    .val-item p { font-size: var(--text-body-sm); line-height: 1.9; color: rgba(255,255,255,.5); }
+
+    /* ─── NEWSLETTER ─── */
+    .newsletter { padding: 100px 40px; text-align: center; background: var(--white); }
+    .newsletter .eyebrow { margin-bottom: 14px; }
+    .newsletter .sec-title { margin-bottom: 18px; }
+    .newsletter p { font-size: var(--text-body); color: var(--gray-mid); line-height: 1.9; max-width: 400px; margin: 0 auto 40px; }
+    .nl-form { display: flex; max-width: 460px; margin: 0 auto 14px; border-bottom: 1px solid var(--black); }
+    .nl-form input { flex: 1; border: none; outline: none; font-family: var(--font-b); font-size: var(--text-nav); padding: 12px 0; background: transparent; color: var(--black); }
+    .nl-form input::placeholder { color: var(--gray-mid); }
+    .nl-form button { background: none; border: none; font-size: var(--text-label); letter-spacing: 2px; text-transform: uppercase; color: var(--black); cursor: pointer; padding: 12px 0 12px 24px; white-space: nowrap; transition: opacity .2s; }
+    .nl-form button:hover { opacity: .4; }
+    .nl-disc { font-size: var(--text-label); color: var(--gray-light); letter-spacing: .3px; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--black); color: var(--white); padding: 72px 40px 32px; }
+    .foot-main { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
+    .foot-brand { display: flex; flex-direction: column; gap: 20px; }
+    .foot-logo .logo-svg { width: 100px; color: var(--white); }
+    .foot-brand p { font-size: var(--text-body-sm); line-height: 1.95; color: rgba(255,255,255,.45); }
+    .socials { display: flex; gap: 18px; }
+    .socials a { font-size: var(--text-label); letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.45); transition: color .2s; }
+    .socials a:hover { color: var(--white); }
+    .foot-col h4 { font-size: var(--text-label); letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 22px; }
+    .foot-col ul { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+    .foot-col ul li a { font-family: var(--font-d); font-size: var(--text-h5); font-weight: 300; color: rgba(255,255,255,.65); transition: color .2s; }
+    .foot-col ul li a:hover { color: var(--white); }
+    .foot-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .foot-bottom p { font-size: var(--text-label); letter-spacing: .4px; color: rgba(255,255,255,.25); }
+    .pay-icons { display: flex; gap: 7px; }
+    .pay-ic { background: rgba(255,255,255,.08); border-radius: 3px; padding: 4px 9px; font-size: 9px; letter-spacing: .5px; color: rgba(255,255,255,.4); }
+
+    /* ─── TESTIMONIALS / DEPOIMENTOS (dark, divided columns) ─── */
+    .testimonials { padding: 96px 40px; background: var(--black); }
+    .testimonials .sec-title { color: var(--white); }
+    .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 1140px; margin: 0 auto; align-items: stretch; }
+    .test-card { padding: 0 44px; display: flex; flex-direction: column; gap: 18px; border-left: 1px solid rgba(255,255,255,.15); }
+    .test-card:first-child { border-left: none; padding-left: 0; }
+    .test-card:last-child { padding-right: 0; }
+    .test-quote-mark { font-family: var(--font-d); font-size: 30px; line-height: .5; color: var(--gray-mid); }
+    .test-quote { font-family: var(--font-d); font-size: var(--text-h4); font-weight: 400; line-height: 1.55; color: var(--white); flex: 1 1 auto; }
+    .test-author { display: flex; flex-direction: column; gap: 5px; }
+    .test-name { font-size: var(--text-label); font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white); }
+    .test-role { font-size: var(--text-body-sm); letter-spacing: .5px; color: var(--gray-mid); }
+
+    /* ─── SCROLL REVEAL ─── */
+    .rv { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+    .rv.vis { opacity: 1; transform: none; }
+    .rv.d1 { transition-delay: .1s; }
+    .rv.d2 { transition-delay: .2s; }
+    .rv.d3 { transition-delay: .3s; }
+    .rv.d4 { transition-delay: .4s; }
+
+    /* ─── TABLET + MOBILE (≤ 1024px) ─── */
+    @media (max-width: 1024px) {
+      /* Header: logo left, icons + hamburger right */
+      .hdr {
+        grid-template-columns: auto 1fr;
+        padding: 0 16px;
+      }
+      .hdr-nav { display: none; }
+      .logo-link { justify-content: flex-start; }
+      .hdr-actions { gap: 12px; }
+      .hamburger { display: flex; }
+      .search-label { display: none; }
+
+      /* Hero: always 100vh */
+      .hero { height: 100vh; }
+      .hero-content { left: 32px; bottom: 80px; max-width: 320px; }
+      .hero-title { font-size: clamp(32px, 5vw, 48px); }
+
+      /* Products: 2 columns */
+      .vitrine { padding: 56px 20px; }
+      .prod-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Editorial: stacked */
+      .ed-banner { grid-template-columns: 1fr; height: auto; }
+      .ed-panel { height: 340px; }
+
+      /* Values: single column */
+      .values { padding: 56px 20px; }
+      .val-grid { grid-template-columns: 1fr; gap: 32px; }
+
+      /* Newsletter */
+      .newsletter { padding: 64px 20px; }
+
+      /* Footer: 2 columns */
+      footer { padding: 56px 20px 28px; }
+      .foot-main { grid-template-columns: 1fr 1fr; gap: 32px; }
+
+      /* Testimonials: single column, horizontal dividers */
+      .testimonials { padding: 72px 40px; }
+      .test-grid { grid-template-columns: 1fr; max-width: 520px; }
+      .test-card { border-left: none; padding: 36px 0; border-top: 1px solid rgba(255,255,255,.15); }
+      .test-card:first-child { border-top: none; padding-top: 0; }
+      .test-card:last-child { padding-bottom: 0; }
+    }
+
+    /* ─── SMALL MOBILE (≤ 600px) ─── */
+    @media (max-width: 600px) {
+      .announce { font-size: 9px; }
+      .ann-extra { display: none; }
+      .hero-content { left: 20px; bottom: 56px; max-width: 260px; }
+      .hero-title { font-size: 30px; margin-bottom: 24px; }
+      .prod-grid { gap: 1px; }
+      .prod-info { padding: 12px 2px 20px; }
+      .prod-name { font-size: 14px; }
+      .foot-main { grid-template-columns: 1fr; }
+      .testimonials { padding: 56px 20px; }
+      .ed-panel { height: 260px; }
+      .hdr-actions { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ ANNOUNCE ═══════════ -->
+  <div class="announce">
+    Frete grátis acima de R$&nbsp;499
+    <span>|</span>
+    10% OFF com o código <strong>AURA10</strong>
+    <span class="ann-extra">|</span>
+    <span class="ann-extra">Entrega em todo o Brasil</span>
+  </div>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header id="siteHeader">
+    <div class="hdr">
+
+      <!-- Left nav (desktop only) -->
+      <nav class="hdr-nav">
+        <a href="#">Novidades</a>
+        <div class="has-drop">
+          <a href="#" class="drop-trigger">
+            Roupas
+            <svg class="drop-arrow" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <div class="dropdown">
+            <div class="mega-inner">
+              <div class="mega-col">
+                <h4 class="mega-head">Roupas</h4>
+                <a href="#">Vestido</a>
+                <a href="#">Blusa</a>
+                <a href="#">Calça</a>
+                <a href="#">Camisa</a>
+                <a href="#">Camiseta</a>
+                <a href="#">Saia</a>
+                <a href="#">Colete</a>
+              </div>
+              <div class="mega-col">
+                <h4 class="mega-head">Em Destaque</h4>
+                <a href="#">Nova Coleção</a>
+                <a href="#">Mais Vendidos</a>
+                <a href="#">Edição Limitada</a>
+              </div>
+              <div class="mega-col">
+                <h4 class="mega-head">Temporada</h4>
+                <a href="#">Lançamentos</a>
+                <a href="#">Volta às Origens</a>
+                <a href="#">Cápsula Outono</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="#">Calçados</a>
+        <a href="#">Acessórios</a>
+        <a href="#" class="sale-link">Sale</a>
+      </nav>
+
+      <!-- Logo -->
+      <a href="#" class="logo-link" aria-label="AURA">
+        <svg class="logo-svg" viewBox="0 0 802 220" xmlns="http://www.w3.org/2000/svg">
+          <path d="M798.915 200.396L801.537 207.677H767.167L765.71 204.182L752.894 170.686L749.69 163.113H640.172L636.968 170.686L623.569 204.182L622.113 207.677H608.132L611.045 200.396L687.358 12.2334L692.018 0.29126H719.981L721.437 3.78654L798.915 200.396ZM645.415 150.297H744.739L742.117 143.015L695.514 24.4669L645.997 148.258L645.415 150.297Z"/>
+          <path d="M588.71 80.1C588.71 89.6149 587.351 98.5473 584.632 106.897C581.914 115.247 577.739 122.917 572.108 129.908C566.476 136.704 559.486 142.335 551.136 146.801L545.602 149.714L578.516 199.231L584.05 207.677H545.019L543.272 205.056L518.513 165.734C515.018 160.297 510.066 157.676 503.658 157.87C501.522 157.87 499.678 157.87 498.124 157.87H447.734V163.404V202.143V207.677H416.277V12.2334V0.29126H437.248H498.124C513.853 0.29126 528.611 3.78654 542.398 10.7771C556.379 17.5734 567.544 26.9913 575.894 39.0305C584.438 51.0698 588.71 63.9829 588.71 77.7698V80.1ZM498.124 147.675C510.164 147.675 520.649 144.665 529.582 138.646C538.708 132.432 545.505 124.276 549.971 114.179C554.631 104.081 556.961 92.8189 556.961 80.3913V77.7698C556.961 68.4491 555.602 59.7109 552.884 51.5553C550.359 43.3996 546.573 36.312 541.524 30.2923C536.669 24.0785 530.456 19.224 522.882 15.7287C515.504 12.2334 507.251 10.4858 498.124 10.4858H447.734V147.675H498.124Z"/>
+          <path d="M364.382 0H376.907V90.2945C376.907 108.548 370.013 124.179 356.227 137.189C342.44 150.005 325.837 156.413 306.419 156.413H298.263C285.447 156.413 273.117 153.501 261.272 147.675C249.621 141.85 240.106 133.791 232.727 123.5C225.348 113.208 221.659 102.14 221.659 90.2945V12.2335L221.95 0H253.699V90.2945C253.699 99.4211 255.349 107.674 258.65 115.053C262.145 122.432 267.291 128.354 274.088 132.82C281.078 137.287 289.137 139.52 298.263 139.52H312.536C326.711 139.52 338.847 134.762 348.945 125.247C359.042 115.538 364.091 103.887 364.091 90.2945V12.2335L364.382 0ZM285.156 208.551C308.264 208.551 329.43 203.114 348.654 192.24L354.188 202.143C333.41 213.988 310.497 219.911 285.447 219.911C241.756 219.911 203.308 201.075 170.103 163.404H50.6815L47.7687 170.977L35.8265 204.182L34.3702 207.969H0L2.62145 200.396L74.5658 3.78655L76.0222 0.291271H108.645C109.421 3.204 110.295 6.60217 111.266 10.4858C113.985 20.0007 117.092 29.904 120.587 40.1956C124.082 50.2931 128.743 62.0411 134.568 75.4396C140.393 88.644 146.704 101.266 153.501 113.305C160.297 125.15 168.453 137.092 177.968 149.132C187.483 160.977 197.386 171.171 207.677 179.715C218.163 188.259 230.105 195.25 243.504 200.687C256.903 205.93 270.787 208.551 285.156 208.551ZM55.3418 150.588H159.617C137.287 121.267 117.771 79.3233 101.072 24.7582L57.672 143.306L55.3418 150.588Z"/>
+        </svg>
+      </a>
+
+      <!-- Right icons -->
+      <div class="hdr-actions">
+        <button aria-label="Buscar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span class="search-label">Buscar</span>
+        </button>
+        <a href="#" aria-label="Favoritos">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </a>
+        <a href="#" aria-label="Minha conta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <a href="#" aria-label="Carrinho" style="position:relative;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile drawer -->
+    <nav class="mobile-menu" id="mobileMenu" data-lenis-prevent>
+      <a href="#">Novidades</a>
+      <a href="#">Roupas</a>
+      <div class="mobile-sub">
+        <a href="#">Calça</a><a href="#">Vestido</a><a href="#">Blusa</a>
+        <a href="#">Camisa</a><a href="#">Camiseta</a><a href="#">Saia</a>
+      </div>
+      <a href="#">Calçados</a>
+      <a href="#">Acessórios</a>
+      <a href="#" class="sale-link">Sale</a>
+    </nav>
+  </header>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero" id="hero">
+
+    <!-- Slide 1 — Mulher frente à igreja (aprovada) -->
+    <div class="hero-slide active">
+      <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1800&q=85&fit=crop&crop=center" alt="Aura SS24" loading="eager" />
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Nova Coleção — 2026</p>
+        <h1 class="hero-title">Elegância<br>Sem Esforço</h1>
+        <a href="#" class="btn">Explorar Coleção</a>
+      </div>
+    </div>
+
+    <!-- Slide 2 — Look vermelho céu azul -->
+    <div class="hero-slide">
+      <img src="imgs/hero-red.png" alt="Coleção Vermelha" loading="lazy" />
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Destaque da Temporada</p>
+        <h1 class="hero-title">Cor que<br>Faz Barulho</h1>
+        <a href="#" class="btn">Ver Coleção</a>
+      </div>
+    </div>
+
+    <!-- Slide 3 — Suéter verde fundo branco -->
+    <div class="hero-slide" data-theme="light">
+      <img src="imgs/hero-green.png" alt="Essenciais — mulher de suéter verde" loading="lazy" />
+      <div class="hero-overlay light"></div>
+      <div class="hero-content dark">
+        <p class="hero-eyebrow">Essenciais</p>
+        <h1 class="hero-title">O Básico<br>Redefinido</h1>
+        <a href="#" class="btn on-light" style="color:var(--black)">Ver Peças</a>
+      </div>
+    </div>
+
+    <div class="hero-dots" id="heroDots">
+      <button class="hdot active" data-i="0"></button>
+      <button class="hdot" data-i="1"></button>
+      <button class="hdot" data-i="2"></button>
+    </div>
+    <button class="hero-arr l" id="heroL" aria-label="Slide anterior"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <button class="hero-arr r" id="heroR" aria-label="Próximo slide"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+  </section>
+
+  <!-- ═══════════ NOVIDADES VITRINE ═══════════ -->
+  <section class="vitrine">
+    <div class="sec-hdr rv">
+      <p class="eyebrow">Em Alta</p>
+      <h2 class="sec-title">Novidades</h2>
+    </div>
+    <div class="prod-grid">
+
+      <!-- Product 1: Colete Bege -->
+      <div class="prod-card rv d1" data-imgs='["imgs/6.webp","imgs/7.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/6.webp" alt="Colete Estruturado" loading="eager" />
+          <span class="prod-badge new-b">Novo</span>
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">PP</button><button class="sz">P</button>
+            <button class="sz">M</button><button class="sz">G</button><button class="sz">GG</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Colete Estruturado</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#C5B8A0" title="Bege"></div>
+            <div class="cdot" style="background:#1A1916" title="Preto"></div>
+          </div>
+          <div class="prod-price"><span class="p-cur">R$ 489,90</span></div>
+        </div>
+      </div>
+
+      <!-- Product 2: Bermuda Laranja -->
+      <div class="prod-card rv d2" data-imgs='["imgs/8.webp","imgs/9.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/8.webp" alt="Bermuda de Alfaiataria" loading="eager" />
+          <span class="prod-badge new-b">Novo</span>
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">36</button><button class="sz">38</button>
+            <button class="sz">40</button><button class="sz">42</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Bermuda de Alfaiataria</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#F5A623" title="Laranja"></div>
+            <div class="cdot" style="background:#1A1916" title="Preto"></div>
+          </div>
+          <div class="prod-price"><span class="p-cur">R$ 379,90</span></div>
+        </div>
+      </div>
+
+      <!-- Product 3: Calça Wide Leg -->
+      <div class="prod-card rv d3" data-imgs='["imgs/10.webp","imgs/11.webp","imgs/12.webp","imgs/13.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/10.webp" alt="Calça Wide Leg" loading="eager" />
+          <span class="prod-badge sale-b">-20%</span>
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+            <button class="img-dot"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">36</button><button class="sz">38</button>
+            <button class="sz">40</button><button class="sz">42</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Calça Wide Leg</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#1A1916" title="Preto"></div>
+          </div>
+          <div class="prod-price">
+            <span class="p-cur">R$ 359,90</span>
+            <span class="p-old">R$ 449,90</span>
+            <span class="p-off">-20%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4: Colete Verniz Marrom -->
+      <div class="prod-card rv d4" data-imgs='["imgs/14.webp","imgs/15.webp","imgs/16.webp","imgs/17.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/14.webp" alt="Colete Verniz" loading="eager" />
+          <span class="prod-badge new-b">Novo</span>
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+            <button class="img-dot"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">PP</button><button class="sz">P</button>
+            <button class="sz">M</button><button class="sz">G</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Colete Verniz</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#8B4513" title="Marrom"></div>
+            <div class="cdot" style="background:#1A1916" title="Preto"></div>
+          </div>
+          <div class="prod-price"><span class="p-cur">R$ 599,90</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="cta-row rv">
+      <a href="#" class="btn on-light" style="color:var(--black)">Ver Todas as Novidades</a>
+    </div>
+  </section>
+
+  <!-- ═══════════ EDITORIAL BANNER ═══════════ -->
+  <div class="ed-banner">
+    <div class="ed-panel">
+      <img src="imgs/editorial-street1.png" alt="Essenciais do dia a dia" loading="lazy" />
+      <div class="ed-overlay">
+        <h2>Essenciais<br>do Dia a Dia</h2>
+        <a href="#" class="btn">Explorar</a>
+      </div>
+    </div>
+    <div class="ed-panel">
+      <img src="imgs/editorial-street2.png" alt="Looks Completos" loading="lazy" />
+      <div class="ed-overlay">
+        <h2>Looks<br>Completos</h2>
+        <a href="#" class="btn">Montar Look</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ BRAND VALUES ═══════════ -->
+  <section class="values">
+    <div class="sec-hdr rv">
+      <p class="eyebrow">Nossa Essência</p>
+      <h2 class="sec-title">Por que a Aura?</h2>
+    </div>
+    <div class="val-grid">
+      <div class="val-item rv d1">
+        <div class="val-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+        <h3>Materiais Sustentáveis</h3>
+        <p>Todas as peças são produzidas com materiais certificados e processos que respeitam o planeta e as pessoas.</p>
+      </div>
+      <div class="val-item rv d2">
+        <div class="val-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></svg></div>
+        <h3>Design Atemporal</h3>
+        <p>Criamos peças versáteis que transcendem tendências passageiras e se adaptam ao seu estilo único ao longo do tempo.</p>
+      </div>
+      <div class="val-item rv d3">
+        <div class="val-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></div>
+        <h3>Moda Acessível</h3>
+        <p>Qualidade e estilo que cabem no seu orçamento. Moda contemporânea sem abrir mão do que realmente importa.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ MAIS VENDIDOS ═══════════ -->
+  <section class="vitrine" style="background:var(--cream)">
+    <div class="sec-hdr rv">
+      <p class="eyebrow">Favoritos</p>
+      <h2 class="sec-title">Mais Vendidos</h2>
+    </div>
+    <div class="prod-grid">
+
+      <div class="prod-card rv d1" data-imgs='["imgs/18.webp","imgs/19.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/18.webp" alt="Vestido Mini Amarelo" loading="lazy" />
+          <span class="prod-badge new-b">Novo</span>
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">PP</button><button class="sz">P</button>
+            <button class="sz">M</button><button class="sz">G</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Vestido Mini Canário</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#F5E642" title="Amarelo"></div>
+            <div class="cdot" style="background:#F8F5F0" title="Off-white"></div>
+          </div>
+          <div class="prod-price"><span class="p-cur">R$ 429,90</span></div>
+        </div>
+      </div>
+
+      <div class="prod-card rv d2" data-imgs='["imgs/20.webp","imgs/21.webp","imgs/22.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/20.webp" alt="Vestido Mini Off-White" loading="lazy" />
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">PP</button><button class="sz">P</button>
+            <button class="sz">M</button><button class="sz">G</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Vestido Mini Off-White</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#F0EDE5" title="Off-white"></div>
+            <div class="cdot" style="background:#F5E642" title="Amarelo"></div>
+          </div>
+          <div class="prod-price"><span class="p-cur">R$ 429,90</span></div>
+        </div>
+      </div>
+
+      <div class="prod-card rv d3" data-imgs='["imgs/6.webp","imgs/7.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/6.webp" alt="Colete Estruturado" loading="lazy" />
+          <span class="prod-badge sale-b">-15%</span>
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">PP</button><button class="sz">P</button>
+            <button class="sz">M</button><button class="sz">G</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Colete Estruturado</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#C5B8A0"></div>
+            <div class="cdot" style="background:#1A1916"></div>
+          </div>
+          <div class="prod-price">
+            <span class="p-cur">R$ 416,40</span>
+            <span class="p-old">R$ 489,90</span>
+            <span class="p-off">-15%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-card rv d4" data-imgs='["imgs/14.webp","imgs/15.webp","imgs/16.webp"]'>
+        <div class="prod-img-wrap">
+          <img src="imgs/14.webp" alt="Colete Verniz" loading="lazy" />
+          <button class="prod-wish" aria-label="Favoritar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <div class="prod-arrows">
+            <button class="prod-arr-btn" data-dir="-1" aria-label="Imagem anterior"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="prod-arr-btn" data-dir="1" aria-label="Próxima imagem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="prod-img-dots">
+            <button class="img-dot active"></button>
+            <button class="img-dot"></button>
+            <button class="img-dot"></button>
+          </div>
+          <div class="prod-sizes">
+            <button class="sz">PP</button><button class="sz">P</button>
+            <button class="sz">M</button><button class="sz">G</button>
+            <span class="sz-label">Tamanho</span>
+          </div>
+        </div>
+        <div class="prod-info">
+          <h3 class="prod-name">Colete Verniz</h3>
+          <div class="prod-colors">
+            <div class="cdot" style="background:#8B4513"></div>
+            <div class="cdot" style="background:#1A1916"></div>
+          </div>
+          <div class="prod-price"><span class="p-cur">R$ 599,90</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="cta-row rv">
+      <a href="#" class="btn on-light" style="color:var(--black)">Ver Todos os Produtos</a>
+    </div>
+  </section>
+
+  <!-- ═══════════ DEPOIMENTOS ═══════════ -->
+  <section class="testimonials">
+    <div class="sec-hdr rv">
+      <p class="eyebrow">Depoimentos</p>
+      <h2 class="sec-title">O Que Elas Dizem</h2>
+    </div>
+    <div class="test-grid">
+      <figure class="test-card rv d1">
+        <div class="test-quote-mark" aria-hidden="true">&ldquo;</div>
+        <blockquote class="test-quote">As peças da Aura se tornaram a base do meu guarda-roupa. Qualidade impecável e um caimento que valoriza de verdade.</blockquote>
+        <figcaption class="test-author">
+          <span class="test-name">Helena Marques</span>
+          <span class="test-role">São Paulo, SP</span>
+        </figcaption>
+      </figure>
+      <figure class="test-card rv d2">
+        <div class="test-quote-mark" aria-hidden="true">&ldquo;</div>
+        <blockquote class="test-quote">Comprar na Aura virou um ritual. Do tecido à embalagem, cada detalhe transmite cuidado e sofisticação.</blockquote>
+        <figcaption class="test-author">
+          <span class="test-name">Beatriz Costa</span>
+          <span class="test-role">Rio de Janeiro, RJ</span>
+        </figcaption>
+      </figure>
+      <figure class="test-card rv d3">
+        <div class="test-quote-mark" aria-hidden="true">&ldquo;</div>
+        <blockquote class="test-quote">Uma marca que une estilo atemporal e consciência. Uso minhas peças favoritas há anos e elas seguem impecáveis.</blockquote>
+        <figcaption class="test-author">
+          <span class="test-name">Carolina Antunes</span>
+          <span class="test-role">Curitiba, PR</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ═══════════ NEWSLETTER ═══════════ -->
+  <section class="newsletter">
+    <div class="rv">
+      <p class="eyebrow">Fique por dentro</p>
+      <h2 class="sec-title">Receba as Novidades</h2>
+      <p>Cadastre-se para receber em primeira mão lançamentos, looks exclusivos e ofertas especiais criadas para você.</p>
+      <form class="nl-form" id="nlForm">
+        <input type="email" placeholder="Seu endereço de e-mail" required aria-label="E-mail" />
+        <button type="submit" id="nlBtn">Inscrever</button>
+      </form>
+      <p class="nl-disc">Ao se cadastrar, você concorda com nossa Política de Privacidade. Sem spam, prometemos.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <div class="foot-main">
+      <div class="foot-brand">
+        <a href="#" class="foot-logo" aria-label="AURA">
+          <svg class="logo-svg" viewBox="0 0 802 220" xmlns="http://www.w3.org/2000/svg">
+            <path d="M798.915 200.396L801.537 207.677H767.167L765.71 204.182L752.894 170.686L749.69 163.113H640.172L636.968 170.686L623.569 204.182L622.113 207.677H608.132L611.045 200.396L687.358 12.2334L692.018 0.29126H719.981L721.437 3.78654L798.915 200.396ZM645.415 150.297H744.739L742.117 143.015L695.514 24.4669L645.997 148.258L645.415 150.297Z"/>
+            <path d="M588.71 80.1C588.71 89.6149 587.351 98.5473 584.632 106.897C581.914 115.247 577.739 122.917 572.108 129.908C566.476 136.704 559.486 142.335 551.136 146.801L545.602 149.714L578.516 199.231L584.05 207.677H545.019L543.272 205.056L518.513 165.734C515.018 160.297 510.066 157.676 503.658 157.87C501.522 157.87 499.678 157.87 498.124 157.87H447.734V163.404V202.143V207.677H416.277V12.2334V0.29126H437.248H498.124C513.853 0.29126 528.611 3.78654 542.398 10.7771C556.379 17.5734 567.544 26.9913 575.894 39.0305C584.438 51.0698 588.71 63.9829 588.71 77.7698V80.1ZM498.124 147.675C510.164 147.675 520.649 144.665 529.582 138.646C538.708 132.432 545.505 124.276 549.971 114.179C554.631 104.081 556.961 92.8189 556.961 80.3913V77.7698C556.961 68.4491 555.602 59.7109 552.884 51.5553C550.359 43.3996 546.573 36.312 541.524 30.2923C536.669 24.0785 530.456 19.224 522.882 15.7287C515.504 12.2334 507.251 10.4858 498.124 10.4858H447.734V147.675H498.124Z"/>
+            <path d="M364.382 0H376.907V90.2945C376.907 108.548 370.013 124.179 356.227 137.189C342.44 150.005 325.837 156.413 306.419 156.413H298.263C285.447 156.413 273.117 153.501 261.272 147.675C249.621 141.85 240.106 133.791 232.727 123.5C225.348 113.208 221.659 102.14 221.659 90.2945V12.2335L221.95 0H253.699V90.2945C253.699 99.4211 255.349 107.674 258.65 115.053C262.145 122.432 267.291 128.354 274.088 132.82C281.078 137.287 289.137 139.52 298.263 139.52H312.536C326.711 139.52 338.847 134.762 348.945 125.247C359.042 115.538 364.091 103.887 364.091 90.2945V12.2335L364.382 0ZM285.156 208.551C308.264 208.551 329.43 203.114 348.654 192.24L354.188 202.143C333.41 213.988 310.497 219.911 285.447 219.911C241.756 219.911 203.308 201.075 170.103 163.404H50.6815L47.7687 170.977L35.8265 204.182L34.3702 207.969H0L2.62145 200.396L74.5658 3.78655L76.0222 0.291271H108.645C109.421 3.204 110.295 6.60217 111.266 10.4858C113.985 20.0007 117.092 29.904 120.587 40.1956C124.082 50.2931 128.743 62.0411 134.568 75.4396C140.393 88.644 146.704 101.266 153.501 113.305C160.297 125.15 168.453 137.092 177.968 149.132C187.483 160.977 197.386 171.171 207.677 179.715C218.163 188.259 230.105 195.25 243.504 200.687C256.903 205.93 270.787 208.551 285.156 208.551ZM55.3418 150.588H159.617C137.287 121.267 117.771 79.3233 101.072 24.7582L57.672 143.306L55.3418 150.588Z"/>
+          </svg>
+        </a>
+        <p>Moda contemporânea para a mulher que valoriza estilo, sustentabilidade e versatilidade no dia a dia e em cada ocasião especial.</p>
+        <div class="socials">
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">Pinterest</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Comprar</h4>
+        <ul>
+          <li><a href="#">Novidades</a></li>
+          <li><a href="#">Roupas</a></li>
+          <li><a href="#">Calçados</a></li>
+          <li><a href="#">Acessórios</a></li>
+          <li><a href="#">Sale</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Ajuda</h4>
+        <ul>
+          <li><a href="#">Minha Conta</a></li>
+          <li><a href="#">Rastrear Pedido</a></li>
+          <li><a href="#">Trocas e Devoluções</a></li>
+          <li><a href="#">Guia de Tamanhos</a></li>
+          <li><a href="#">Fale Conosco</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>A Marca</h4>
+        <ul>
+          <li><a href="#">Nossa História</a></li>
+          <li><a href="#">Sustentabilidade</a></li>
+          <li><a href="#">Imprensa</a></li>
+          <li><a href="#">Trabalhe Conosco</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>&copy; 2024 Aura. Todos os direitos reservados.</p>
+      <div class="pay-icons">
+        <span class="pay-ic">VISA</span>
+        <span class="pay-ic">MASTER</span>
+        <span class="pay-ic">PIX</span>
+        <span class="pay-ic">AMEX</span>
+        <span class="pay-ic">BOLETO</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="lenis.min.js"></script>
+  <script>
+    // ── SMOOTH SCROLL with inertia (Lenis) ──
+    // Disabled when the user prefers reduced motion, or if the lib failed to load.
+    if (window.Lenis && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const lenis = new Lenis({
+        duration: 1.2,                                            // higher = longer glide / more "delay"
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out: quick start, eases to a gentle stop
+        smoothWheel: true,
+      });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+    }
+
+    // ── HEADER — transparent → opaque on scroll ──
+    const siteHeader = document.getElementById('siteHeader');
+    const heroSection = document.getElementById('hero');
+
+    function updateHeader() {
+      const threshold = heroSection.offsetHeight * 0.75;
+      siteHeader.classList.toggle('scrolled', window.scrollY > threshold);
+    }
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    updateHeader();
+
+    // ── ROUPAS mega-menu: hover/focus opens it and fills the (transparent) header ──
+    const roupasDrop = document.querySelector('.has-drop');
+    if (roupasDrop) {
+      const openNav  = () => siteHeader.classList.add('nav-open');
+      const closeNav = () => siteHeader.classList.remove('nav-open');
+      roupasDrop.addEventListener('mouseenter', openNav);
+      siteHeader.addEventListener('mouseleave', closeNav);
+      document.querySelectorAll('.hdr-nav > a').forEach(a => a.addEventListener('mouseenter', closeNav));
+      roupasDrop.addEventListener('focusin', openNav);
+      roupasDrop.addEventListener('focusout', (e) => { if (!roupasDrop.contains(e.relatedTarget)) closeNav(); });
+    }
+
+    // ── HERO CAROUSEL ──
+    const slides = document.querySelectorAll('.hero-slide');
+    const hdots  = document.querySelectorAll('.hdot');
+    let cur = 0, heroTimer;
+
+    function syncHeaderTheme() {
+      // dark (black) header over light-background slides (e.g. the green-sweater slide)
+      siteHeader.classList.toggle('over-light', slides[cur].dataset.theme === 'light');
+    }
+    function heroGoTo(n) {
+      slides[cur].classList.remove('active');
+      hdots[cur].classList.remove('active');
+      cur = (n + slides.length) % slides.length;
+      slides[cur].classList.add('active');
+      hdots[cur].classList.add('active');
+      syncHeaderTheme();
+    }
+    function heroStart() { heroTimer = setInterval(() => heroGoTo(cur + 1), 5500); }
+    function heroStop()  { clearInterval(heroTimer); }
+
+    document.getElementById('heroR').addEventListener('click', () => { heroStop(); heroGoTo(cur + 1); heroStart(); });
+    document.getElementById('heroL').addEventListener('click', () => { heroStop(); heroGoTo(cur - 1); heroStart(); });
+    hdots.forEach((d, i) => d.addEventListener('click', () => { heroStop(); heroGoTo(i); heroStart(); }));
+    syncHeaderTheme();
+    heroStart();
+
+    // Swipe on hero
+    let tx = 0;
+    heroSection.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+    heroSection.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 40) { heroStop(); heroGoTo(cur + (dx < 0 ? 1 : -1)); heroStart(); }
+    }, { passive: true });
+
+    // ── PRODUCT IMAGE CAROUSEL ──
+    document.querySelectorAll('.prod-card').forEach(card => {
+      const imgs = JSON.parse(card.dataset.imgs || '[]');
+      if (imgs.length < 2) return;
+
+      const imgEl  = card.querySelector('.prod-img-wrap img');
+      const dots   = card.querySelectorAll('.img-dot');
+      const arrows = card.querySelectorAll('.prod-arr-btn');
+      let idx = 0;
+
+      function showImg(n) {
+        idx = (n + imgs.length) % imgs.length;
+        imgEl.src = imgs[idx];
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+
+      arrows.forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          showImg(idx + parseInt(btn.dataset.dir));
+        });
+      });
+
+      dots.forEach((d, i) => {
+        d.addEventListener('click', e => { e.stopPropagation(); showImg(i); });
+      });
+    });
+
+    // ── SIZE SELECTOR ──
+    document.querySelectorAll('.sz').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        btn.closest('.prod-sizes').querySelectorAll('.sz').forEach(s => s.classList.remove('sel'));
+        btn.classList.add('sel');
+      });
+    });
+
+    // ── WISHLIST TOGGLE ──
+    document.querySelectorAll('.prod-wish').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        btn.classList.toggle('liked');
+      });
+    });
+
+    // ── HAMBURGER ──
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+
+    // ── NEWSLETTER ──
+    document.getElementById('nlForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = document.getElementById('nlBtn');
+      btn.textContent = 'Obrigada! ✓';
+      btn.style.color = '#B09070';
+      e.target.querySelector('input').value = '';
+      setTimeout(() => { btn.textContent = 'Inscrever'; btn.style.color = ''; }, 3000);
+    });
+
+    // ── SCROLL REVEAL ──
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(el => { if (el.isIntersecting) el.target.classList.add('vis'); });
+    }, { threshold: 0.08, rootMargin: '0px 0px -28px 0px' });
+    document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
