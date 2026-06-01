@@ -65,14 +65,15 @@
       position: sticky; top: 0; z-index: 200;
       /* transparent by default — overlays the hero */
       background: transparent;
-      border-bottom: 1px solid transparent;
-      transition: background .4s ease, border-color .4s ease;
+      /* hairline via box-shadow so it never adds 1px to the header height (no white gap under the announce bar) */
+      box-shadow: 0 1px 0 0 transparent;
+      transition: background .4s ease, box-shadow .4s ease;
       /* custom property drives all text/icon colors */
       --hdr-fg: var(--white);
     }
     header.scrolled {
       background: rgba(255,255,255,0.97);
-      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 0 0 var(--border);
       backdrop-filter: blur(10px);
       --hdr-fg: var(--black);
     }
@@ -82,7 +83,7 @@
     header.over-light:not(.scrolled) .hdr-nav .sale-link::after { background: var(--sale); }
     header.over-light:not(.scrolled) .cart-badge { background: var(--black); color: var(--white); }
     /* Roupas mega-menu open → fill the header into a seamless white panel */
-    header.nav-open { border-bottom-color: transparent; }
+    header.nav-open { box-shadow: none; }
     header.nav-open:not(.scrolled) { background: rgba(255,255,255,0.97); backdrop-filter: blur(10px); --hdr-fg: var(--black); }
     header.nav-open:not(.scrolled) .hdr-nav .sale-link { color: var(--sale); }
     header.nav-open:not(.scrolled) .hdr-nav .sale-link::after { background: var(--sale); }
